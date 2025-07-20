@@ -1,0 +1,73 @@
+COMPREHENSIVE EXPERIMENT REPORT
+================================================================================
+Generated at: 2025-07-05 14:01:25.676092
+Total experiment time: 24.55 hours
+
+EXPERIMENT SUMMARY:
+Total experiments: 5
+Successful: 5
+Failed: 0
+
+MAIN COMPARISON TABLE:
+====================================================================================================================================================================================
+Model                     Algorithm    Params(K)    FLOPs(M)     Size(MB)   Time(h)  WV2_PSNR   WV2_SSIM   WV2_SAM    WV3_PSNR   WV3_SSIM   WV3_SAM    GF2_PSNR   GF2_SSIM   GF2_SAM   
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+pantiny_conv_1x1          pantiny      68.2         2234.52      0.26       5.81     41.7524    0.9690     0.0227     30.4518    0.9222     0.0761     48.3679    0.9888     0.0098    
+pantiny_channel_attention pantiny      71.4         2338.26      0.27       5.81     41.7150    0.9686     0.0228     30.4404    0.9216     0.0767     48.3406    0.9886     0.0097    
+pantiny_gated_conv        pantiny      70.3         2303.33      0.27       3.92     41.6551    0.9686     0.0229     30.4417    0.9219     0.0766     48.3242    0.9886     0.0098    
+pantiny_deepfusion_5      pantiny      113.6        3722.12      0.43       5.05     41.6579    0.9684     0.0229     30.3410    0.9206     0.0771     48.3468    0.9887     0.0098    
+pantiny_enhanced_conv     pantiny      81.7         2678.59      0.31       3.95     41.8455    0.9696     0.0224     30.5902    0.9238     0.0749     48.6119    0.9894     0.0095    
+====================================================================================================================================================================================
+
+INDIVIDUAL EXPERIMENT DETAILS:
+--------------------------------------------------
+
+Experiment: pantiny_conv_1x1
+Description: PanTiny with 1x1 conv fusion
+Algorithm: pantiny
+Success: True
+Training time: 5.81 hours
+Results directory: ../Out/fusion_abl_1751606920/pantiny_conv_1x1/pantiny_conv_1x1/1751606920
+Parameters: 68192
+FLOPs: 2234515456
+------------------------------
+
+Experiment: pantiny_channel_attention
+Description: PanTiny with channel attention fusion
+Algorithm: pantiny
+Success: True
+Training time: 5.81 hours
+Results directory: ../Out/fusion_abl_1751606920/pantiny_channel_attention/pantiny_channel_attention/1751627832
+Parameters: 71358
+FLOPs: 2338258944
+------------------------------
+
+Experiment: pantiny_gated_conv
+Description: PanTiny with gated conv fusion (our best)
+Algorithm: pantiny
+Success: True
+Training time: 3.92 hours
+Results directory: ../Out/fusion_abl_1751606920/pantiny_gated_conv/pantiny_gated_conv/1751648759
+Parameters: 70292
+FLOPs: 2303328256
+------------------------------
+
+Experiment: pantiny_deepfusion_5
+Description: PanTiny with deepfusion 5 layers (Pan-Mamba style)
+Algorithm: pantiny
+Success: True
+Training time: 5.05 hours
+Results directory: ../Out/fusion_abl_1751606920/pantiny_deepfusion_5/pantiny_deepfusion_5/1751662881
+Parameters: 113590
+FLOPs: 3722117120
+------------------------------
+
+Experiment: pantiny_enhanced_conv
+Description: PanTiny with enhanced conv fusion
+Algorithm: pantiny
+Success: True
+Training time: 3.95 hours
+Results directory: ../Out/fusion_abl_1751606920/pantiny_enhanced_conv/pantiny_enhanced_conv/1751681070
+Parameters: 81744
+FLOPs: 2678587392
+------------------------------

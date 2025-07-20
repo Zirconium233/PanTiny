@@ -1,0 +1,102 @@
+================================================================================
+UNIVERSAL SOLVER FINAL REPORT
+================================================================================
+Generated: 2025-07-04 18:52:48
+Experiment: single_encoder_ours
+Total Training Time: 5.41 hours
+
+EXPERIMENT CONFIGURATION:
+----------------------------------------
+Model: panrestormer
+Training Dataset: ['WV2', 'WV3', 'GF2']
+Evaluation Datasets: WV2, WV3, GF2
+Epochs: 500
+Batch Size: 16
+Learning Rate: 0.0005
+Data Augmentation: False
+
+MODEL INFORMATION:
+----------------------------------------
+Total Parameters: 48,269
+Model FLOPs: 1.58 G
+Model Size: 0.18 MB
+
+LOSS CONFIGURATION:
+----------------------------------------
+  L1: weight=1.5
+  MEF_SSIM: weight=4.0
+  focal: weight=1.5
+
+BEST RESULTS SUMMARY:
+----------------------------------------
+Reference Metrics (with ground truth):
+  Best WV2 PSNR: 41.6926 (Epoch 25)
+  Best WV3 PSNR: 30.4224 (Epoch 19)
+  Best GF2 PSNR: 48.3572 (Epoch 19)
+  Average Best PSNR: 40.1574
+  Best WV2 SSIM: 0.9687 (Epoch 24)
+  Best WV3 SSIM: 0.9219 (Epoch 25)
+  Best GF2 SSIM: 0.9887 (Epoch 19)
+  Average Best SSIM: 0.9598
+  Best WV2 CC: 0.9751 (Epoch 25)
+  Best WV3 CC: 0.9594 (Epoch 21)
+  Best GF2 CC: 0.9628 (Epoch 22)
+  Average Best CC: 0.9658
+  Best WV2 SAM: 0.0228 (Epoch 25)
+  Best WV3 SAM: 0.0761 (Epoch 19)
+  Best GF2 SAM: 0.0097 (Epoch 19)
+  Average Best SAM: 0.0362
+  Best WV2 ERGAS: 0.9366 (Epoch 25)
+  Best WV3 ERGAS: 3.1257 (Epoch 19)
+  Best GF2 ERGAS: 0.4928 (Epoch 20)
+  Average Best ERGAS: 1.5183
+
+No-Reference Metrics (full resolution):
+
+SAVED MODELS:
+----------------------------------------
+  latest.pth (Final model)
+  bestPSNR.pth (Best Average PSNR)
+  bestSSIM.pth (Best Average SSIM)
+
+Experiment Directory: ../Out/encoder_abl_1751606909/single_encoder_ours/single_encoder_ours/1751606909
+Checkpoints: ../Out/encoder_abl_1751606909/single_encoder_ours/single_encoder_ours/1751606909/checkpoints
+TensorBoard Logs: ../Out/encoder_abl_1751606909/single_encoder_ours/single_encoder_ours/1751606909/logs
+Results: ../Out/encoder_abl_1751606909/single_encoder_ours/single_encoder_ours/1751606909/results
+
+================================================================================
+FINAL TEST RESULTS WITH SAVED MODELS
+================================================================================
+
+Latest Model Test Results:
+--------------------------------------------------
+Reference Metrics (with ground truth):
+Dataset  PSNR     SSIM     CC       SAM      ERGAS   
+--------------------------------------------------------
+WV2      41.6926  0.9687   0.9751   0.0228   0.9366  
+WV3      30.3700  0.9219   0.9593   0.0765   3.1350  
+GF2      48.2865  0.9887   0.9624   0.0098   0.4955  
+
+No-Reference Metrics (full resolution):
+Dataset      D_lambda   D_s        QNR       
+---------------------------------------------
+WV2          0.0000     0.0000     0.0000    
+WV3          0.0000     0.0000     0.0000    
+GF2          0.0000     0.0000     0.0000    
+
+BestPSNR Model Test Results:
+--------------------------------------------------
+Reference Metrics (with ground truth):
+Dataset  PSNR     SSIM     CC       SAM      ERGAS   
+--------------------------------------------------------
+WV2      41.6797  0.9685   0.9750   0.0229   0.9384  
+WV3      30.4224  0.9216   0.9594   0.0761   3.1257  
+GF2      48.3572  0.9887   0.9626   0.0097   0.4931  
+
+No-Reference Metrics (full resolution):
+Dataset      D_lambda   D_s        QNR       
+---------------------------------------------
+WV2          0.0000     0.0000     0.0000    
+WV3          0.0000     0.0000     0.0000    
+GF2          0.0000     0.0000     0.0000    
+================================================================================

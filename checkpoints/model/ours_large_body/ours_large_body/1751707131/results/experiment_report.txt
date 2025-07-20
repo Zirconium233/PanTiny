@@ -1,0 +1,102 @@
+================================================================================
+UNIVERSAL SOLVER FINAL REPORT
+================================================================================
+Generated: 2025-07-06 03:08:02
+Experiment: ours_large_body
+Total Training Time: 9.82 hours
+
+EXPERIMENT CONFIGURATION:
+----------------------------------------
+Model: pantiny
+Training Dataset: ['WV2', 'WV3', 'GF2']
+Evaluation Datasets: WV2, WV3, GF2
+Epochs: 500
+Batch Size: 16
+Learning Rate: 0.0005
+Data Augmentation: False
+
+MODEL INFORMATION:
+----------------------------------------
+Total Parameters: 172,352
+Model FLOPs: 5.65 G
+Model Size: 0.66 MB
+
+LOSS CONFIGURATION:
+----------------------------------------
+  L1: weight=1.5
+  MEF_SSIM: weight=4.0
+  focal: weight=1.5
+
+BEST RESULTS SUMMARY:
+----------------------------------------
+Reference Metrics (with ground truth):
+  Best WV2 PSNR: 42.0683 (Epoch 24)
+  Best WV3 PSNR: 30.6758 (Epoch 24)
+  Best GF2 PSNR: 48.7651 (Epoch 24)
+  Average Best PSNR: 40.5031
+  Best WV2 SSIM: 0.9708 (Epoch 24)
+  Best WV3 SSIM: 0.9248 (Epoch 24)
+  Best GF2 SSIM: 0.9897 (Epoch 24)
+  Average Best SSIM: 0.9618
+  Best WV2 CC: 0.9771 (Epoch 22)
+  Best WV3 CC: 0.9615 (Epoch 24)
+  Best GF2 CC: 0.9652 (Epoch 22)
+  Average Best CC: 0.9679
+  Best WV2 SAM: 0.0219 (Epoch 24)
+  Best WV3 SAM: 0.0742 (Epoch 24)
+  Best GF2 SAM: 0.0093 (Epoch 24)
+  Average Best SAM: 0.0352
+  Best WV2 ERGAS: 0.8965 (Epoch 24)
+  Best WV3 ERGAS: 3.0378 (Epoch 24)
+  Best GF2 ERGAS: 0.4711 (Epoch 24)
+  Average Best ERGAS: 1.4685
+
+No-Reference Metrics (full resolution):
+
+SAVED MODELS:
+----------------------------------------
+  latest.pth (Final model)
+  bestPSNR.pth (Best Average PSNR)
+  bestSSIM.pth (Best Average SSIM)
+
+Experiment Directory: ../Out/model_abl_1751690455/ours_large_body/ours_large_body/1751707131
+Checkpoints: ../Out/model_abl_1751690455/ours_large_body/ours_large_body/1751707131/checkpoints
+TensorBoard Logs: ../Out/model_abl_1751690455/ours_large_body/ours_large_body/1751707131/logs
+Results: ../Out/model_abl_1751690455/ours_large_body/ours_large_body/1751707131/results
+
+================================================================================
+FINAL TEST RESULTS WITH SAVED MODELS
+================================================================================
+
+Latest Model Test Results:
+--------------------------------------------------
+Reference Metrics (with ground truth):
+Dataset  PSNR     SSIM     CC       SAM      ERGAS   
+--------------------------------------------------------
+WV2      42.0648  0.9708   0.9771   0.0219   0.8970  
+WV3      30.6710  0.9248   0.9615   0.0742   3.0395  
+GF2      48.7485  0.9896   0.9650   0.0094   0.4720  
+
+No-Reference Metrics (full resolution):
+Dataset      D_lambda   D_s        QNR       
+---------------------------------------------
+WV2          0.0000     0.0000     0.0000    
+WV3          0.0000     0.0000     0.0000    
+GF2          0.0000     0.0000     0.0000    
+
+BestPSNR Model Test Results:
+--------------------------------------------------
+Reference Metrics (with ground truth):
+Dataset  PSNR     SSIM     CC       SAM      ERGAS   
+--------------------------------------------------------
+WV2      42.0683  0.9708   0.9771   0.0219   0.8965  
+WV3      30.6758  0.9248   0.9615   0.0742   3.0378  
+GF2      48.7651  0.9897   0.9651   0.0093   0.4711  
+
+No-Reference Metrics (full resolution):
+Dataset      D_lambda   D_s        QNR       
+---------------------------------------------
+WV2          0.0000     0.0000     0.0000    
+WV3          0.0000     0.0000     0.0000    
+GF2          0.0000     0.0000     0.0000    
+================================================================================

@@ -1,0 +1,102 @@
+================================================================================
+UNIVERSAL SOLVER FINAL REPORT
+================================================================================
+Generated: 2025-07-05 14:01:14
+Experiment: pantiny_enhanced_conv
+Total Training Time: 3.95 hours
+
+EXPERIMENT CONFIGURATION:
+----------------------------------------
+Model: pantiny
+Training Dataset: ['WV2', 'WV3', 'GF2']
+Evaluation Datasets: WV2, WV3, GF2
+Epochs: 500
+Batch Size: 16
+Learning Rate: 0.0005
+Data Augmentation: False
+
+MODEL INFORMATION:
+----------------------------------------
+Total Parameters: 81,744
+Model FLOPs: 2.68 G
+Model Size: 0.31 MB
+
+LOSS CONFIGURATION:
+----------------------------------------
+  L1: weight=1.5
+  MEF_SSIM: weight=4.0
+  focal: weight=1.5
+
+BEST RESULTS SUMMARY:
+----------------------------------------
+Reference Metrics (with ground truth):
+  Best WV2 PSNR: 41.8466 (Epoch 23)
+  Best WV3 PSNR: 30.5902 (Epoch 25)
+  Best GF2 PSNR: 48.6151 (Epoch 24)
+  Average Best PSNR: 40.3506
+  Best WV2 SSIM: 0.9696 (Epoch 25)
+  Best WV3 SSIM: 0.9238 (Epoch 22)
+  Best GF2 SSIM: 0.9894 (Epoch 24)
+  Average Best SSIM: 0.9609
+  Best WV2 CC: 0.9762 (Epoch 23)
+  Best WV3 CC: 0.9608 (Epoch 25)
+  Best GF2 CC: 0.9647 (Epoch 24)
+  Average Best CC: 0.9672
+  Best WV2 SAM: 0.0224 (Epoch 25)
+  Best WV3 SAM: 0.0749 (Epoch 24)
+  Best GF2 SAM: 0.0095 (Epoch 25)
+  Average Best SAM: 0.0356
+  Best WV2 ERGAS: 0.9185 (Epoch 23)
+  Best WV3 ERGAS: 3.0678 (Epoch 25)
+  Best GF2 ERGAS: 0.4771 (Epoch 23)
+  Average Best ERGAS: 1.4878
+
+No-Reference Metrics (full resolution):
+
+SAVED MODELS:
+----------------------------------------
+  latest.pth (Final model)
+  bestPSNR.pth (Best Average PSNR)
+  bestSSIM.pth (Best Average SSIM)
+
+Experiment Directory: ../Out/fusion_abl_1751606920/pantiny_enhanced_conv/pantiny_enhanced_conv/1751681070
+Checkpoints: ../Out/fusion_abl_1751606920/pantiny_enhanced_conv/pantiny_enhanced_conv/1751681070/checkpoints
+TensorBoard Logs: ../Out/fusion_abl_1751606920/pantiny_enhanced_conv/pantiny_enhanced_conv/1751681070/logs
+Results: ../Out/fusion_abl_1751606920/pantiny_enhanced_conv/pantiny_enhanced_conv/1751681070/results
+
+================================================================================
+FINAL TEST RESULTS WITH SAVED MODELS
+================================================================================
+
+Latest Model Test Results:
+--------------------------------------------------
+Reference Metrics (with ground truth):
+Dataset  PSNR     SSIM     CC       SAM      ERGAS   
+--------------------------------------------------------
+WV2      41.8455  0.9696   0.9762   0.0224   0.9188  
+WV3      30.5902  0.9238   0.9608   0.0749   3.0678  
+GF2      48.6119  0.9894   0.9647   0.0095   0.4773  
+
+No-Reference Metrics (full resolution):
+Dataset      D_lambda   D_s        QNR       
+---------------------------------------------
+WV2          0.0000     0.0000     0.0000    
+WV3          0.0000     0.0000     0.0000    
+GF2          0.0000     0.0000     0.0000    
+
+BestPSNR Model Test Results:
+--------------------------------------------------
+Reference Metrics (with ground truth):
+Dataset  PSNR     SSIM     CC       SAM      ERGAS   
+--------------------------------------------------------
+WV2      41.8455  0.9696   0.9762   0.0224   0.9188  
+WV3      30.5902  0.9238   0.9608   0.0749   3.0678  
+GF2      48.6119  0.9894   0.9647   0.0095   0.4773  
+
+No-Reference Metrics (full resolution):
+Dataset      D_lambda   D_s        QNR       
+---------------------------------------------
+WV2          0.0000     0.0000     0.0000    
+WV3          0.0000     0.0000     0.0000    
+GF2          0.0000     0.0000     0.0000    
+================================================================================

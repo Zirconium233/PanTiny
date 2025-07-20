@@ -1,0 +1,5 @@
+Universal experiment started.
+Algorithm: panrestormer
+Training on: ['WV2', 'WV3', 'GF2']
+Evaluating on: WV2, WV3, GF2
+Loss functions: ['L1', 'MEF_SSIM', 'focal']

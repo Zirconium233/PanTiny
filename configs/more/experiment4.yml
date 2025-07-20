@@ -1,0 +1,237 @@
+# Experiment 4: Loss Function Comparison
+# Purpose: Comprehensive loss function analysis with corrected implementation
+
+experiment_name: "experiment4_stable_loss_comparison"
+experiment_description: "Comprehensive stable loss function analysis using pnnv2 (VGG excluded for stability)"
+
+# Base configuration - will be used as default for all experiments
+base_config:
+  algorithm: "pnnv2"  # Use pnnv2 instead of pnn
+  nEpochs: 200  # Reduced from 200 for efficiency, 1 for debug
+  output_dir: "../Out"
+  gpu_mode: true
+  save_best: true
+  gpus: [0]
+  threads: 4
+  seed: 123
+  
+  # Data directories
+  data_dirs:
+    train:
+      WV2: ../data/WV2_data/train128
+      WV3: ../data/WV3_data/train128
+      GF2: ../data/GF2_data/train128
+    eval:
+      WV2: ../data/WV2_data/test128
+      WV3: ../data/WV3_data/test128
+      GF2: ../data/GF2_data/test128
+  
+  # Full resolution data directories (only GF2 enabled for quick testing)
+  full_data_dirs:
+    WV2: 
+      enabled: false
+      path: ../data/fullWV2_dataset
+    WV3: 
+      enabled: false
+      path: ""
+    GF2: 
+      enabled: false # for quick testing
+      path: ../data/fullGF2_data/train512
+  
+  # Data usage configuration
+  data_usage:
+    datasets: ["WV2", "WV3", "GF2"]  # Use all three datasets for training
+    # datasets: ["WV2"] # for debug
+    usage_percent: 1.0
+    data_seed: 42
+    balance_datasets: true
+  
+  # Evaluation configuration
+  evaluation:
+    full_resolution_in_val: false
+    full_resolution_in_test: true
+    save_all_test_images: true
+    test_models:
+      latest: true
+      bestPSNR: true
+      bestSSIM: false
+      bestQNR: false
+  
+  source_ms: ms
+  source_pan: pan
+  
+  # Pretrain configuration
+  pretrain:
+    pretrained: false
+    pre_sr: ""
+    pre_folder: ../Out/checkpoint
+  
+  # Data configuration
+  data:
+    upsacle: 4
+    batch_size: 32
+    patch_size: 32
+    n_colors: 4
+    rgb_range: 255
+    normalize: false
+    
+    # Data augmentation
+    augmentation:
+      enabled: true
+      random_rotation: true
+      rotation_degrees: [0, 90, 180, 270]
+      random_flip: true
+      flip_horizontal: true
+      flip_vertical: true
+      gaussian_noise: false
+      noise_sigma: 0.01
+      random_crop: true
+      crop_scale: [0.8, 1.0]
+      aug_prob: 0.5
+    
+  # Model configuration for pnnv2 large version (300K params)
+  model:
+    num_channels: 4
+    size: "large"    # Use size configuration instead of base_filter
+    # Specific parameters (optional overrides)
+    # hidden_dim1: 96
+    # hidden_dim2: 64
+    # kernel_size1: 11
+    # kernel_size2: 7
+    # kernel_size3: 5
+    
+  # Optimizer configuration
+  schedule:
+    lr: 0.0001
+    decay: 1000
+    gamma: 0.1
+    optimizer: ADAM
+    momentum: 0.9
+    beta1: 0.9
+    beta2: 0.999
+    epsilon: 1e-8
+    alpha: 0.9
+    weight_decay: 0.0001
+    gclip: 0.4
+    
+    # Learning rate scheduling
+    lr_scheduler:
+      type: "cosine"
+      eta_min: 1e-6
+      cosine:
+        T_max: 500
+        eta_min: 5e-8
+      step:
+        step_size: 100
+        gamma: 0.5
+    
+    # Evaluation settings
+    eval_interval: 20
+    save_interval: 20
+    use_YCbCr: false
+  
+  # Advanced training options
+  advanced:
+    mixed_precision: false
+    gradient_accumulation_steps: 1
+    
+    early_stopping:
+      enabled: false
+      patience: 50
+      min_delta: 1e-6
+      metric: 'PSNR'
+      mode: 'max'
+    
+    ema:
+      enabled: false
+      decay: 0.999
+    
+    metrics:
+      - 'PSNR'
+      - 'SSIM'
+      - 'CC'
+      - 'SAM'
+      - 'ERGAS'
+      - 'QNR'
+      - 'D_lambda'
+      - 'D_s'
+
+# Individual experiments - Redesigned without VGG Loss to avoid stability issues
+experiments:
+  # Single loss experiments
+  - name: "L1_only"
+    description: "Pure L1 loss baseline"
+    loss:
+      L1:
+        enabled: true
+        weight: 1.0
+        
+  - name: "MSE_only"
+    description: "Pure MSE loss baseline"
+    loss:
+      MSE:
+        enabled: true
+        weight: 1.0
+        
+  - name: "SSIM_only"
+    description: "Pure SSIM loss (MEF_SSIM)"
+    loss:
+      SSIM:
+        enabled: true
+        weight: 1.0
+        
+  # Two-loss combinations (stable combinations)
+  - name: "L1_SSIM"
+    description: "L1 + SSIM combination"
+    loss:
+      L1:
+        enabled: true
+        weight: 0.8
+      SSIM:
+        enabled: true
+        weight: 0.2
+        
+  - name: "L1_NewLoss"
+    description: "L1 + Enhanced NewLoss combination"
+    loss:
+      L1:
+        enabled: true
+        weight: 0.8
+      NewLoss:
+        enabled: true
+        weight: 0.2
+        
+  - name: "MSE_SSIM"
+    description: "MSE + SSIM combination"
+    loss:
+      MSE:
+        enabled: true
+        weight: 0.7
+      SSIM:
+        enabled: true
+        weight: 0.3
+        
+  - name: "SSIM_NewLoss"
+    description: "SSIM + NewLoss combination"
+    loss:
+      SSIM:
+        enabled: true
+        weight: 0.6
+      NewLoss:
+        enabled: true
+        weight: 0.4
+        
+  # Three-loss combinations (advanced stable combinations)
+  - name: "L1_MSE_SSIM"
+    description: "L1 + MSE + SSIM triple combination"
+    loss:
+      L1:
+        enabled: true
+        weight: 0.5
+      MSE:
+        enabled: true
+        weight: 0.3
+      SSIM:
+        enabled: true
+        weight: 0.2
+        

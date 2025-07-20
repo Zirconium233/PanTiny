@@ -1,0 +1,140 @@
+advanced:
+  early_stopping:
+    enabled: false
+    metric: PSNR
+    min_delta: 1.0e-06
+    mode: max
+    patience: 50
+  ema:
+    decay: 0.999
+    enabled: false
+  gradient_accumulation_steps: 1
+  metrics:
+  - PSNR
+  - SSIM
+  - CC
+  - SAM
+  - ERGAS
+  - QNR
+  - D_lambda
+  - D_s
+  mixed_precision: false
+algorithm: pantiny
+data:
+  augmentation:
+    aug_prob: 0.5
+    crop_scale:
+    - 0.8
+    - 1.0
+    enabled: false
+    flip_horizontal: true
+    flip_vertical: true
+    gaussian_noise: false
+    noise_sigma: 0.01
+    random_crop: true
+    random_flip: true
+    random_rotation: true
+    rotation_degrees:
+    - 0
+    - 90
+    - 180
+    - 270
+  batch_size: 16
+  n_colors: 4
+  normalize: false
+  patch_size: 32
+  rgb_range: 255
+  upsacle: 4
+data_dirs:
+  eval:
+    GF2: ../data/GF2_data/test128
+    WV2: ../data/WV2_data/test128
+    WV3: ../data/WV3_data/test128
+  train:
+    GF2: ../data/GF2_data/train128
+    WV2: ../data/WV2_data/train128
+    WV3: ../data/WV3_data/train128
+data_usage:
+  balance_datasets: false
+  data_seed: 42
+  datasets:
+  - WV2
+  - WV3
+  - GF2
+  usage_percent: 1.0
+description: Our model large body
+evaluation:
+  full_resolution_in_test: true
+  full_resolution_in_val: false
+  save_all_test_images: true
+  test_models:
+    bestPSNR: true
+    bestQNR: false
+    bestSSIM: false
+    latest: true
+full_data_dirs:
+  GF2:
+    enabled: false
+    path: ../data/fullGF2_data/train512
+  WV2:
+    enabled: false
+    path: ../data/fullWV2_dataset
+  WV3:
+    enabled: false
+    path: ../data/fullWV3_dataset
+gpu_mode: true
+gpus:
+- 0
+loss:
+  L1:
+    enabled: true
+    weight: 1.5
+  MEF_SSIM:
+    enabled: true
+    weight: 4.0
+  focal:
+    enabled: true
+    weight: 1.5
+model:
+  base_filter: 64
+  downsample_levels: 0
+  fusion_type: gated_conv
+  model_scale: large
+  num_channels: 4
+  refine_type: simple
+nEpochs: 500
+name: ours_large_body
+output_dir: ../Out/model_abl_1751690455/ours_large_body
+pretrain:
+  pre_folder: ../Out/checkpoint
+  pre_sr: ''
+  pretrained: false
+save_best: true
+schedule:
+  alpha: 0.9
+  beta1: 0.9
+  beta2: 0.999
+  decay: 1000
+  epsilon: 1.0e-08
+  eval_interval: 20
+  gamma: 0.1
+  gclip: 4
+  lr: 0.0005
+  lr_scheduler:
+    cosine:
+      T_max: 500
+      eta_min: 5.0e-08
+    eta_min: 1.0e-06
+    step:
+      gamma: 0.5
+      step_size: 100
+    type: cosine
+  momentum: 0.9
+  optimizer: ADAM
+  save_interval: 20
+  use_YCbCr: false
+  weight_decay: 0.0001
+seed: 123
+source_ms: ms
+source_pan: pan
+threads: 4

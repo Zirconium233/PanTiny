@@ -1,0 +1,297 @@
+# Experiment 6: Architecture Comparison and Reproduction
+# Purpose: Architecture experiments & reproduction experiments with advanced models
+
+experiment_name: "experiment6_architecture_comparison"
+experiment_description: "Comprehensive architecture comparison including Mamba, Flow, Restormer variants and reproduction experiments"
+
+# Base configuration - shared settings for all models
+base_config:
+  nEpochs: 200  # Standard training epochs, 1 for quick testing
+  output_dir: "../Out"
+  gpu_mode: true
+  save_best: true
+  gpus: [0]
+  threads: 4
+  seed: 123
+  
+  # Data directories
+  data_dirs:
+    train:
+      WV2: ../data/WV2_data/train128
+      WV3: ../data/WV3_data/train128
+      GF2: ../data/GF2_data/train128
+    eval:
+      WV2: ../data/WV2_data/test128
+      WV3: ../data/WV3_data/test128
+      GF2: ../data/GF2_data/test128
+  
+  # Full resolution data directories
+  full_data_dirs:
+    WV2: 
+      enabled: false
+      path: ../data/fullWV2_dataset
+    WV3: 
+      enabled: false
+      path: ../data/fullWV3_dataset
+    GF2: 
+      enabled: false  # For quick testing
+      path: ../data/fullGF2_data/train512
+  
+  # Data usage configuration
+  data_usage:
+    datasets: ["WV2", "WV3", "GF2"]  # Use all three datasets for training
+    # datasets: ["WV2"]  # For quick testing, use only WV2
+    usage_percent: 1.0
+    data_seed: 42
+    balance_datasets: true
+  
+  # Evaluation configuration
+  evaluation:
+    full_resolution_in_val: false
+    full_resolution_in_test: true
+    save_all_test_images: true
+    test_models:
+      latest: true
+      bestPSNR: true
+      bestSSIM: false
+      bestQNR: false
+  
+  source_ms: ms
+  source_pan: pan
+  
+  # Pretrain configuration
+  pretrain:
+    pretrained: false
+    pre_sr: ""
+    pre_folder: ../Out/checkpoint
+  
+  # Data configuration
+  data:
+    upsacle: 4
+    batch_size: 16
+    patch_size: 32
+    n_colors: 4
+    rgb_range: 255
+    normalize: false
+    
+    # Data augmentation
+    augmentation:
+      enabled: true
+      random_rotation: true
+      rotation_degrees: [0, 90, 180, 270]
+      random_flip: true
+      flip_horizontal: true
+      flip_vertical: true
+      gaussian_noise: false
+      noise_sigma: 0.01
+      random_crop: true
+      crop_scale: [0.8, 1.0]
+      aug_prob: 0.5
+  
+  loss:
+    L1:
+      enabled: true
+      weight: 0.8
+    MEF_SSIM:
+      enabled: true  
+      weight: 0.5
+    focal:  # Maps to newloss/NewLoss via loss.py
+      enabled: true
+      weight: 0.4
+  
+  # Optimizer configuration
+  schedule:
+    lr: 0.0001
+    decay: 1000
+    gamma: 0.1
+    optimizer: ADAM
+    momentum: 0.9
+    beta1: 0.9
+    beta2: 0.999
+    epsilon: 1e-8
+    alpha: 0.9
+    weight_decay: 0.0001
+    gclip: 0.4
+    
+    # Learning rate scheduling
+    lr_scheduler:
+      type: "cosine"
+      eta_min: 1e-6
+      cosine:
+        T_max: 500
+        eta_min: 5e-8
+      step:
+        step_size: 100
+        gamma: 0.5
+    
+    # Evaluation settings
+    eval_interval: 20
+    save_interval: 20
+    use_YCbCr: false
+  
+  # Advanced training options
+  advanced:
+    mixed_precision: false
+    gradient_accumulation_steps: 1
+    
+    early_stopping:
+      enabled: false
+      patience: 50
+      min_delta: 1e-6
+      metric: 'PSNR'
+      mode: 'max'
+    
+    ema:
+      enabled: false
+      decay: 0.999
+    
+    metrics:
+      - 'PSNR'
+      - 'SSIM'
+      - 'CC'
+      - 'SAM'
+      - 'ERGAS'
+      - 'QNR'
+      - 'D_lambda'
+      - 'D_s'
+
+experiments:
+  
+  # =================================================================
+  # PanFlow Variants (Original + Enhanced versions)
+  # =================================================================
+  
+  - name: "panflow_orig"
+    description: "PanFlow original reproduction"
+    algorithm: "panflow"  
+    model:
+      num_channels: 4
+      base_filter: 64
+      
+  - name: "resatten_small"
+    description: "resatten small version (reduced parameters)"
+    algorithm: "resatten"
+    model:
+      num_channels: 4
+      base_filter: 64
+      size: "small"
+      
+  - name: "resatten_medium"
+    description: "resatten medium version (balanced parameters)"
+    algorithm: "resatten"
+    model:
+      num_channels: 4
+      base_filter: 64
+      size: "medium"
+      
+  - name: "resatten_large"
+    description: "resatten large version (increased parameters)"
+    algorithm: "resatten"
+    model:
+      num_channels: 4
+      base_filter: 64
+      size: "large"
+      
+  # =================================================================
+  # PSCINN Variants (Original reproduction)
+  # =================================================================
+  
+  - name: "pscinn_orig"
+    description: "PSCINN original reproduction"
+    algorithm: "pscinn"
+    model:
+      num_channels: 4
+      base_filter: 64  # Add base_filter parameter
+      
+  # =================================================================
+  # XRestormer-based Architecture (PanRestormer variants)
+  # =================================================================
+  
+  - name: "panrestormer_4ds"
+    description: "PanRestormer with 4-level downsampling (standard)"
+    algorithm: "panrestormer"
+    model:
+      num_channels: 4
+      base_filter: 64
+      downsample_levels: 4
+      fusion_type: "conv"
+      
+  - name: "panrestormer_2ds"
+    description: "PanRestormer with 2-level downsampling"
+    algorithm: "panrestormer"
+    model:
+      num_channels: 4
+      base_filter: 64
+      downsample_levels: 2
+      fusion_type: "conv"
+      
+  - name: "panrestormer_0ds"
+    description: "PanRestormer without downsampling (architecture impact test)"
+    algorithm: "panrestormer"
+    model:
+      num_channels: 4
+      base_filter: 64
+      downsample_levels: 0
+      fusion_type: "conv"
+      
+  - name: "panrestormer_att"
+    description: "PanRestormer with attention-based fusion"
+    algorithm: "panrestormer"
+    model:
+      num_channels: 4
+      base_filter: 64
+      downsample_levels: 4
+      fusion_type: "attention"
+
+# =================================================================
+# Expected Results and Analysis Goals
+# =================================================================
+# This experiment aims to:
+# 1. Reproduce and validate performance of advanced architectures (Mamba, Flow, PSCINN)
+# 2. Test the impact of architectural choices (downsampling levels, fusion methods)  
+# 3. Compare different paradigms: CNN-based, Transformer-based, Flow-based, Hybrid
+# 4. Validate effectiveness of enhanced loss combination (L1 + SSIM + Focal)
+# 
+# Key Metrics to Compare:
+# - PSNR, SSIM, SAM, ERGAS (with labels)
+# - D_lambda, D_s, QNR (without labels)
+# - Parameter count and training efficiency
+# - Inference speed and memory usage
+#
+# Enhanced Loss Configuration (All Models):
+# - L1 Loss: weight = 0.8 (base reconstruction loss)
+# - SSIM Loss: weight = 0.5 (perceptual quality)  
+# - Focal Loss: weight = 0.4 (enhanced attention to hard examples)
+# (Based on plan2.md experience: SSIM very effective, NewLoss/Focal effective on WV2/WV3)
+#
+# Architecture Analysis Framework:
+# 1. Reproduction Validation: Compare with published results  
+# 2. Architectural Impact: Effect of downsampling levels (0/2/4)
+# 3. Fusion Method Comparison: Simple conv vs attention-based fusion
+# 4. Paradigm Comparison: Different architectural approaches
+# 5. Parameter Efficiency: Performance per parameter analysis
+# 6. Training Stability: Convergence behavior analysis
+#
+# Expected Model Categories:
+# 
+# Advanced Reproductions:
+# - panmamba_orig: State-of-art Mamba-based approach 
+# - panflow_orig: Flow-based generative approach
+# - pscinn_orig: Invertible neural network approach
+# 
+# Enhanced Variants:
+# - resatten_small/large/multihead: Scalable flow-based variants
+# - panrestormer_4ds/2ds/0ds: Transformer variants with different architectures
+# - panrestormer_att: Enhanced fusion mechanism
+#
+# Downsampling Impact Study (PanRestormer):
+# - 4-level: Standard multi-scale processing
+# - 2-level: Reduced complexity, faster processing  
+# - 0-level: Single-scale, pure attention mechanism
+#
+# This experiment will establish:
+# 1. Which architectures work best for pan-sharpening
+# 2. The importance of multi-scale processing  
+# 3. Effectiveness of different fusion strategies
+# 4. Optimal loss function combinations
+# 5. Reference benchmarks for future work

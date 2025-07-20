@@ -1,0 +1,187 @@
+
+experiment_name: "experiment_special_exp_for_mamba"
+experiment_description: "reproduction of mamba"
+
+# Base configuration - shared settings for all models
+base_config:
+  nEpochs: 500  # Standard training epochs, 1 for quick testing
+  output_dir: "../Out"
+  gpu_mode: true
+  save_best: true
+  gpus: [0]
+  threads: 4
+  seed: 123
+  
+  # Data directories
+  data_dirs:
+    train:
+      WV2: ../data/WV2_data/train128
+      WV3: ../data/WV3_data/train128
+      GF2: ../data/GF2_data/train128
+    eval:
+      WV2: ../data/WV2_data/test128
+      WV3: ../data/WV3_data/test128
+      GF2: ../data/GF2_data/test128
+  
+  # Full resolution data directories
+  full_data_dirs:
+    WV2: 
+      enabled: false
+      path: ../data/fullWV2_dataset
+    WV3: 
+      enabled: false
+      path: ../data/fullWV3_dataset
+    GF2: 
+      enabled: false  # For quick testing
+      path: ../data/fullGF2_data/train512
+  
+  # Data usage configuration
+  data_usage:
+    datasets: ["WV2", "WV3", "GF2"]  # Use all three datasets for training
+    # datasets: ["WV2"]  # For quick testing, use only WV2
+    usage_percent: 1.0
+    data_seed: 42
+    balance_datasets: true
+  
+  # Evaluation configuration
+  evaluation:
+    full_resolution_in_val: false
+    full_resolution_in_test: true
+    save_all_test_images: true
+    test_models:
+      latest: true
+      bestPSNR: true
+      bestSSIM: false
+      bestQNR: false
+  
+  source_ms: ms
+  source_pan: pan
+  
+  # Pretrain configuration
+  pretrain:
+    pretrained: false
+    pre_sr: ""
+    pre_folder: ../Out/checkpoint
+  
+  # Data configuration
+  data:
+    upsacle: 4
+    batch_size: 4
+    patch_size: 32
+    n_colors: 4
+    rgb_range: 255
+    normalize: false
+    
+    # Data augmentation
+    augmentation:
+      enabled: false
+      random_rotation: true
+      rotation_degrees: [0, 90, 180, 270]
+      random_flip: true
+      flip_horizontal: true
+      flip_vertical: true
+      gaussian_noise: false
+      noise_sigma: 0.01
+      random_crop: true
+      crop_scale: [0.8, 1.0]
+      aug_prob: 0.5
+  
+  loss:
+    L1:
+      enabled: true
+      weight: 0.8
+    MEF_SSIM:
+      enabled: true  
+      weight: 0.5
+    focal:  # Maps to newloss/NewLoss via loss.py
+      enabled: true
+      weight: 0.4
+  
+  # Optimizer configuration
+  schedule:
+    lr: 5e-4
+    decay: 1000
+    gamma: 0.1
+    optimizer: ADAM
+    momentum: 0.9
+    beta1: 0.9
+    beta2: 0.999
+    epsilon: 1e-8
+    alpha: 0.9
+    weight_decay: 0.0001
+    gclip: 4
+    
+    # Learning rate scheduling
+    lr_scheduler:
+      type: "cosine"
+      eta_min: 1e-6
+      cosine:
+        T_max: 500
+        eta_min: 5e-8
+      step:
+        step_size: 100
+        gamma: 0.5
+    
+    # Evaluation settings
+    eval_interval: 20
+    save_interval: 20
+    use_YCbCr: false
+  
+  # Advanced training options
+  advanced:
+    mixed_precision: false
+    gradient_accumulation_steps: 1
+    
+    early_stopping:
+      enabled: false
+      patience: 50
+      min_delta: 1e-6
+      metric: 'PSNR'
+      mode: 'max'
+    
+    ema:
+      enabled: false
+      decay: 0.999
+    
+    metrics:
+      - 'PSNR'
+      - 'SSIM'
+      - 'CC'
+      - 'SAM'
+      - 'ERGAS'
+      - 'QNR'
+      - 'D_lambda'
+      - 'D_s'
+
+experiments:
+  
+  # =================================================================
+  # PanMamba Variants (Original reproduction)
+  # =================================================================
+  
+  - name: "panmamba_orig"
+    description: "PanMamba original reproduction (adapted for new mamba_ssm API)"
+    algorithm: "panmamba"
+    model:
+      num_channels: 4
+      base_filter: 32  # Changed from 64 to 32 for consistency with original code
+      
+  # =================================================================
+  # PanFlow Variants (Original + Enhanced versions)
+  # =================================================================
+  - name: "panres_2en0ds"
+    description: "PanRestormer with 2 encoders (architecture impact test)"
+    algorithm: "panres2en"
+    model:
+      num_channels: 4
+      base_filter: 64
+      downsample_levels: 0
+
+  - name: "panres_only2en0ds"
+    description: "PanRestormer with 2 encoders but no deepfusion"
+    algorithm: "m3"
+    model:
+      num_channels: 4
+      base_filter: 64
+      downsample_levels: 0
+      fusion_type: "attention"

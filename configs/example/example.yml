@@ -1,0 +1,242 @@
+#
+# Example Enhanced Configuration for Research Experiments
+# @Description: Example configuration showing advanced features for ablation studies
+#
+
+name: EnhancedResearchNet
+algorithm: pannet_v2_new
+nEpochs: 200
+gpu_mode: True
+save_best: True
+gpus: [0]
+threads: 4
+log_dir: ../Out/log/
+seed: 123
+checkpoint: ../Out/checkpoint
+
+# Multi-dataset configuration for comprehensive experiments
+data_dirs:
+  train:
+    WV2: ../data/WV2_data/train128
+    WV3: ../data/WV3_data/train128
+    GF2: ../data/GF2_data/train128
+  eval:
+    WV2: ../data/WV2_data/test128
+    WV3: ../data/WV3_data/test128
+    GF2: ../data/GF2_data/test128
+
+# Data usage configuration for ablation studies
+data_usage:
+  # Experiment 1: Single dataset
+  datasets: ['WV3']  # ['WV2'], ['WV3'], ['GF2']
+  
+  # Experiment 2: Data percentage ablation
+  usage_percent: 1.0  # Try: 0.1, 0.5, 1.0
+  
+  # Data sampling settings
+  data_seed: 42
+  balance_datasets: True
+
+source_ms: ms
+source_pan: pan
+
+# Pretrain configuration
+pretrain:
+  pretrained: False
+  pre_sr: ""
+  pre_folder: ../Out/checkpoint
+
+# Enhanced test configuration supporting multiple datasets
+test:
+  algorithm: pannet_v2_new
+  type: test
+  
+  # Single dataset testing (backward compatibility)
+  data_dir: ../data/WV3_data/test128
+  
+  # Multi-dataset testing (new feature)
+  data_dirs:
+    WV2: ../data/WV2_data/test128
+    WV3: ../data/WV3_data/test128
+    GF2: ../data/GF2_data/test128
+  
+  source_ms: ms
+  source_pan: pan
+  model: enhanced_model/bestPSNR.pth
+  save_dir: ../Out/result/enhanced_research
+  save_images: True
+
+# Enhanced data configuration
+data:
+  upsacle: 4
+  batch_size: 8
+  patch_size: 32
+  n_colors: 4
+  rgb_range: 255
+  normalize: False
+  
+  # Advanced data augmentation for comprehensive experiments
+  augmentation:
+    enabled: True
+    
+    # Geometric augmentations
+    random_rotation: True
+    rotation_degrees: [0, 90, 180, 270]
+    random_flip: True
+    flip_horizontal: True
+    flip_vertical: True
+    
+    # Photometric augmentations (experimental)
+    color_jitter: False
+    brightness: 0.05
+    contrast: 0.05
+    saturation: 0.05
+    hue: 0.02
+    
+    # Noise augmentations (for robustness)
+    gaussian_noise: False
+    noise_sigma: 0.005
+    
+    # Crop augmentations
+    random_crop: True
+    crop_scale: [0.8, 1.0]
+    
+    # Probability settings
+    aug_prob: 0.5
+
+# Enhanced training schedule
+schedule:
+  lr: 4e-5
+  decay: 1000
+  gamma: 0.1
+  optimizer: ADAM
+  momentum: 0.9
+  beta1: 0.9
+  beta2: 0.999
+  epsilon: 1e-8
+  alpha: 0.9
+  weight_decay: 1e-4
+  gclip: 20
+  
+  # Advanced learning rate scheduling
+  lr_scheduler:
+    type: 'cosine'  # Options: cosine, step, multistep, exponential, plateau
+    cosine:
+      T_max: 200
+      eta_min: 5e-8
+    step:
+      step_size: 50
+      gamma: 0.5
+    multistep:
+      milestones: [50, 100, 150]
+      gamma: 0.5
+    exponential:
+      gamma: 0.95
+    plateau:
+      mode: 'min'
+      factor: 0.5
+      patience: 10
+      threshold: 1e-4
+  
+  # Enhanced loss configuration for comprehensive experiments
+  loss:
+    # Primary loss
+    primary:
+      type: 'L1'  # Options: L1, L2, MSE, Huber
+      weight: 1.0
+    
+    # Auxiliary losses for enhanced training
+    auxiliary:
+      ssim:
+        enabled: False  # Enable for SSIM loss experiment
+        weight: 0.1
+        window_size: 11
+      
+      perceptual:
+        enabled: False  # Enable for perceptual loss experiment
+        weight: 0.1
+        feature_layers: ['relu1_2', 'relu2_2', 'relu3_3']
+        
+      frequency:
+        enabled: False  # Enable for frequency domain loss experiment
+        weight: 0.1
+        
+      gradient:
+        enabled: False  # Enable for gradient loss experiment
+        weight: 0.1
+        
+      edge:
+        enabled: False  # Enable for edge loss experiment
+        weight: 0.05
+  
+  # Evaluation settings
+  eval_interval: 5  # Evaluate every 5 epochs
+  save_interval: 10  # Save checkpoint every 10 epochs
+  use_YCbCr: False
+
+# Advanced training options for research
+advanced:
+  # Mixed precision training (for speed)
+  mixed_precision: False
+  
+  # Gradient accumulation (for large batch simulation)
+  gradient_accumulation_steps: 1
+  
+  # Early stopping for efficiency
+  early_stopping:
+    enabled: False  # Enable for long training runs
+    patience: 30
+    min_delta: 1e-6
+    metric: 'PSNR'
+    mode: 'max'
+  
+  # Model EMA (for stability)
+  ema:
+    enabled: False
+    decay: 0.999
+  
+  # Comprehensive metrics tracking
+  metrics:
+    - 'PSNR'
+    - 'SSIM'
+    - 'SAM'
+    - 'ERGAS'
+    - 'QNR'
+    - 'D_lambda'
+    - 'D_s'
+  
+  # Cross validation (future feature)
+  cross_validation:
+    enabled: False
+    folds: 5
+    
+  # Ablation study flags
+  ablation:
+    data_percent_study: False
+    loss_ablation: False
+    augmentation_ablation: False
+
+# Research experiment configurations
+experiments:
+  # Experiment 1: Data percentage ablation
+  data_ablation:
+    enabled: False
+    percentages: [0.1, 0.2, 0.5, 1.0]
+    
+  # Experiment 2: Loss function ablation
+  loss_ablation:
+    enabled: False
+    loss_combinations:
+      - ['L1']
+      - ['L1', 'SSIM']
+      - ['L1', 'gradient']
+      - ['L1', 'SSIM', 'gradient']
+      
+  # Experiment 3: Augmentation ablation
+  augmentation_ablation:
+    enabled: False
+    augmentation_sets:
+      - {'enabled': False}
+      - {'enabled': True, 'random_rotation': True, 'random_flip': False}
+      - {'enabled': True, 'random_rotation': True, 'random_flip': True}
+      - {'enabled': True, 'random_rotation': True, 'random_flip': True, 'gaussian_noise': True}

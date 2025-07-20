@@ -1,0 +1,466 @@
+#
+# Experiment 2 Configuration: Model Size and Loss Weight Optimization
+# @Description: Automated hyperparameter tuning for SOTA performance
+#
+
+# Experiment metadata
+experiment_name: "exp2"
+experiment_description: "Model size and loss weight optimization for SOTA performance"
+
+# Base configuration (inherited by all sub-experiments)
+base_config:
+  algorithm: pnnv2
+  nEpochs: 1  # Sufficient epochs for convergence, but this time, 1 epoch for debug, not change until final
+  gpu_mode: True
+  save_best: True
+  gpus: [0]
+  threads: 4
+  seed: 123
+  
+  # Output directory configuration
+  output_dir: ../Out
+  
+  # Data directories
+  data_dirs:
+    train:
+      WV2: ../data/WV2_data/train128
+      WV3: ../data/WV3_data/train128
+      GF2: ../data/GF2_data/train128
+    eval:
+      WV2: ../data/WV2_data/test128
+      WV3: ../data/WV3_data/test128
+      GF2: ../data/GF2_data/test128
+  
+  # Full resolution data directories
+  full_data_dirs:
+    WV2: 
+      enabled: false # disable for now, 210 image, each takes 1 minutes to process, to long
+      path: ../data/fullWV2_dataset # directly include ms and pan folders, no test folder. 
+    WV3: 
+      enabled: false  # No proper full resolution data available
+      path: ""
+    GF2: 
+      enabled: false
+      path: ../data/fullGF2_data/train512
+  
+  # Data usage configuration
+  data_usage:
+    datasets: ['WV3', 'WV2', 'GF2']  # Train on all datasets
+    usage_percent: 1.0
+    data_seed: 42
+    balance_datasets: True
+  
+  # Evaluation configuration
+  evaluation:
+    full_resolution_in_val: false
+    full_resolution_in_test: true
+    save_all_test_images: true
+  
+  source_ms: ms
+  source_pan: pan
+  
+  # Pretrain configuration
+  pretrain:
+    pretrained: False
+    pre_sr: ""
+    pre_folder: ../Out/checkpoint
+  
+  # Data configuration
+  data:
+    upsacle: 4
+    batch_size: 8
+    patch_size: 32
+    n_colors: 4
+    rgb_range: 255
+    normalize: False
+    
+    # Data augmentation
+    augmentation:
+      enabled: True
+      random_rotation: True
+      rotation_degrees: [0, 90, 180, 270]
+      random_flip: True
+      flip_horizontal: True
+      flip_vertical: True
+      gaussian_noise: False
+      noise_sigma: 0.01
+      random_crop: True
+      crop_scale: [0.8, 1.0]
+      aug_prob: 0.5
+  
+  # Base training schedule
+  schedule:
+    lr: 4e-5
+    decay: 1000
+    gamma: 0.1
+    optimizer: ADAM
+    momentum: 0.9
+    beta1: 0.9
+    beta2: 0.999
+    epsilon: 1e-8
+    alpha: 0.9
+    weight_decay: 1e-4
+    gclip: 0.4
+    
+    # Learning rate scheduling
+    lr_scheduler:
+      type: 'cosine'
+      cosine:
+        T_max: 500
+        eta_min: 5e-8
+      step:
+        step_size: 100
+        gamma: 0.5
+    
+    # Evaluation settings
+    eval_interval: 20
+    save_interval: 20
+    use_YCbCr: False
+  
+  # Advanced training options
+  advanced:
+    mixed_precision: False
+    gradient_accumulation_steps: 1
+    
+    early_stopping:
+      enabled: False
+      patience: 50
+      min_delta: 1e-6
+      metric: 'PSNR'
+      mode: 'max'
+    
+    ema:
+      enabled: False
+      decay: 0.999
+    
+    metrics:
+      - 'PSNR'
+      - 'SSIM'
+      - 'CC'
+      - 'SAM'
+      - 'ERGAS'
+      - 'QNR'
+      - 'D_lambda'
+      - 'D_s'
+
+# Model size experiments
+model_size_experiments:
+  - name: "pnn_small"
+    description: "Small PNN model (~30K parameters)"
+    model:
+      size: "small"
+      hidden_dim1: 24
+      hidden_dim2: 16
+      kernel_size1: 7
+      kernel_size2: 3
+      kernel_size3: 3
+    schedule:
+      loss:
+        primary:
+          type: 'L1'
+          weight: 1.0
+        auxiliary:
+          ssim:
+            enabled: False
+            weight: 0.1
+          perceptual:
+            enabled: False
+            weight: 0.1
+          frequency:
+            enabled: False
+            weight: 0.1
+          gradient:
+            enabled: False
+            weight: 0.1
+          edge:
+            enabled: False
+            weight: 0.05
+
+  - name: "pnn_original"
+    description: "Original PNN model (~60K parameters)"
+    model:
+      size: "original"
+      hidden_dim1: 48
+      hidden_dim2: 32
+      kernel_size1: 9
+      kernel_size2: 5
+      kernel_size3: 5
+    schedule:
+      loss:
+        primary:
+          type: 'L1'
+          weight: 1.0
+        auxiliary:
+          ssim:
+            enabled: False
+            weight: 0.1
+          perceptual:
+            enabled: False
+            weight: 0.1
+          frequency:
+            enabled: False
+            weight: 0.1
+          gradient:
+            enabled: False
+            weight: 0.1
+          edge:
+            enabled: False
+            weight: 0.05
+
+  - name: "pnn_bigger"
+    description: "Bigger PNN model (~150K parameters)"
+    model:
+      size: "bigger"
+      hidden_dim1: 64
+      hidden_dim2: 48
+      kernel_size1: 9
+      kernel_size2: 7
+      kernel_size3: 5
+    schedule:
+      loss:
+        primary:
+          type: 'L1'
+          weight: 1.0
+        auxiliary:
+          ssim:
+            enabled: False
+            weight: 0.1
+          perceptual:
+            enabled: False
+            weight: 0.1
+          frequency:
+            enabled: False
+            weight: 0.1
+          gradient:
+            enabled: False
+            weight: 0.1
+          edge:
+            enabled: False
+            weight: 0.05
+
+  - name: "pnn_large"
+    description: "Large PNN model (~300K parameters)"
+    model:
+      size: "large"
+      hidden_dim1: 96
+      hidden_dim2: 64
+      kernel_size1: 11
+      kernel_size2: 7
+      kernel_size3: 5
+    schedule:
+      loss:
+        primary:
+          type: 'L1'
+          weight: 1.0
+        auxiliary:
+          ssim:
+            enabled: False
+            weight: 0.1
+          perceptual:
+            enabled: False
+            weight: 0.1
+          frequency:
+            enabled: False
+            weight: 0.1
+          gradient:
+            enabled: False
+            weight: 0.1
+          edge:
+            enabled: False
+            weight: 0.05
+
+  - name: "pnn_huge"
+    description: "Huge PNN model (~1M+ parameters)"
+    model:
+      size: "huge"
+      hidden_dim1: 128
+      hidden_dim2: 96
+      kernel_size1: 13
+      kernel_size2: 9
+      kernel_size3: 7
+    schedule:
+      loss:
+        primary:
+          type: 'L1'
+          weight: 1.0
+        auxiliary:
+          ssim:
+            enabled: False
+            weight: 0.1
+          perceptual:
+            enabled: False
+            weight: 0.1
+          frequency:
+            enabled: False
+            weight: 0.1
+          gradient:
+            enabled: False
+            weight: 0.1
+          edge:
+            enabled: False
+            weight: 0.05
+
+# Loss weight experiments (using large model for better capacity)
+loss_weight_experiments:
+  - name: "loss_l1_only"
+    description: "L1 loss only (baseline)"
+    model:
+      size: "large"
+      hidden_dim1: 96
+      hidden_dim2: 64
+      kernel_size1: 11
+      kernel_size2: 7
+      kernel_size3: 5
+    schedule:
+      loss:
+        primary:
+          type: 'L1'
+          weight: 1.0
+        auxiliary:
+          ssim:
+            enabled: False
+            weight: 0.0
+          perceptual:
+            enabled: False
+            weight: 0.0
+          frequency:
+            enabled: False
+            weight: 0.0
+          gradient:
+            enabled: False
+            weight: 0.0
+          edge:
+            enabled: False
+            weight: 0.0
+
+  - name: "loss_l1_ssim"
+    description: "L1 + SSIM loss combination"
+    model:
+      size: "large"
+    schedule:
+      loss:
+        primary:
+          type: 'L1'
+          weight: 1.0
+        auxiliary:
+          ssim:
+            enabled: True
+            weight: 0.2
+            window_size: 11
+          perceptual:
+            enabled: False
+            weight: 0.0
+          frequency:
+            enabled: False
+            weight: 0.0
+          gradient:
+            enabled: False
+            weight: 0.0
+          edge:
+            enabled: False
+            weight: 0.0
+
+  - name: "loss_l1_perceptual"
+    description: "L1 + Perceptual loss combination"
+    model:
+      size: "large"
+    schedule:
+      loss:
+        primary:
+          type: 'L1'
+          weight: 1.0
+        auxiliary:
+          ssim:
+            enabled: False
+            weight: 0.0
+          perceptual:
+            enabled: True
+            weight: 0.1
+          frequency:
+            enabled: False
+            weight: 0.0
+          gradient:
+            enabled: False
+            weight: 0.0
+          edge:
+            enabled: False
+            weight: 0.0
+
+  - name: "loss_l1_frequency"
+    description: "L1 + Frequency loss combination"
+    model:
+      size: "large"
+    schedule:
+      loss:
+        primary:
+          type: 'L1'
+          weight: 1.0
+        auxiliary:
+          ssim:
+            enabled: False
+            weight: 0.0
+          perceptual:
+            enabled: False
+            weight: 0.0
+          frequency:
+            enabled: True
+            weight: 0.15
+          gradient:
+            enabled: False
+            weight: 0.0
+          edge:
+            enabled: False
+            weight: 0.0
+
+  - name: "loss_l1_gradient"
+    description: "L1 + Gradient loss combination"
+    model:
+      size: "large"
+    schedule:
+      loss:
+        primary:
+          type: 'L1'
+          weight: 1.0
+        auxiliary:
+          ssim:
+            enabled: False
+            weight: 0.0
+          perceptual:
+            enabled: False
+            weight: 0.0
+          frequency:
+            enabled: False
+            weight: 0.0
+          gradient:
+            enabled: True
+            weight: 0.1
+          edge:
+            enabled: False
+            weight: 0.0
+
+  - name: "loss_comprehensive"
+    description: "Comprehensive loss combination"
+    model:
+      size: "large"
+    schedule:
+      loss:
+        primary:
+          type: 'L1'
+          weight: 1.0
+        auxiliary:
+          ssim:
+            enabled: True
+            weight: 0.1
+            window_size: 11
+          perceptual:
+            enabled: True
+            weight: 0.05
+          frequency:
+            enabled: True
+            weight: 0.1
+          gradient:
+            enabled: True
+            weight: 0.05
+          edge:
+            enabled: True
+            weight: 0.02

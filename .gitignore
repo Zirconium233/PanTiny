@@ -1,0 +1,25 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Log and checkpoints
+*.log
+out/
+log/
+# checkpoints/ # open weight
+
+# special
+*.DS_Store
+Work_dir/
+README_enhanced.md
+*.ipynb
+
+# vscode
+.vscode
