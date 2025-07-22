@@ -648,5 +648,13 @@ Our repository is based on [Pan-Mamba](https://github.com/alexhe101/Pan-Mamba.gi
 
 If you find this codebase useful, please consider citing our paper:
 ```
-placeholder
+@misc{zhang2025pantiny,
+      title={Rethinking Pan-sharpening: Principled Design, Unified Training, and a Universal Loss Surpass Brute-Force Scaling}, 
+      author={Ran Zhang and Xuanhua He and Li Xueheng and Ke Cao and Liu Liu and Wenbo Xu and Fang Jiabin and Yang Qize and Jie Zhang},
+      year={2025},
+      eprint={2507.15059},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2507.15059}, 
+}
 ```
