@@ -52,6 +52,8 @@ The codebase includes implementations of major pan-sharpening methods:
 - **State-Space Models**: PanMamba (with Mamba blocks)
 - **Research Variants**: M1-M6 (our experimental models with different fusion strategies)
 
+Download link for [Weights](https://github.com/Zirconium233/PanTiny/tree/master/checkpoints/model)
+
 #### Environment Setup
 
 **Quick Start**
